@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.surfersolution.workshopionic.domain.Category;
 import com.surfersolution.workshopionic.repositories.CategoryRepository;
+import com.surfersolution.workshopionic.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class CategoryService {
@@ -16,7 +17,8 @@ public class CategoryService {
 	
 	public Category findById(Integer id) {
 		Optional<Category>obj = categoryRepository.findById(id);
-		return obj.orElse(null);
+		return obj.orElseThrow(() -> new ObjectNotFoundException(
+				"Objet no found! Id: " + id + ", Type: " + Category.class.getName()));
 	}
 	
 	
