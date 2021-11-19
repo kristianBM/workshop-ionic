@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.surfersolution.workshopionic.domain.enums.ClientType;
 
 @Entity
@@ -31,6 +32,7 @@ public class Client implements Serializable {
 	private String cpfOrCnpj;
 	private Integer type;
 	
+	@JsonManagedReference
 	@OneToMany(mappedBy = "client")
 	private List<Address> address = new ArrayList<>();
 	
