@@ -14,6 +14,7 @@ import com.surfersolution.workshopionic.domain.Category;
 import com.surfersolution.workshopionic.domain.City;
 import com.surfersolution.workshopionic.domain.Client;
 import com.surfersolution.workshopionic.domain.Order;
+import com.surfersolution.workshopionic.domain.OrderItem;
 import com.surfersolution.workshopionic.domain.Payment;
 import com.surfersolution.workshopionic.domain.Product;
 import com.surfersolution.workshopionic.domain.SlipPayment;
@@ -24,6 +25,7 @@ import com.surfersolution.workshopionic.repositories.AddressRepository;
 import com.surfersolution.workshopionic.repositories.CategoryRepository;
 import com.surfersolution.workshopionic.repositories.CityRepository;
 import com.surfersolution.workshopionic.repositories.ClientRepository;
+import com.surfersolution.workshopionic.repositories.OrderItemRepository;
 import com.surfersolution.workshopionic.repositories.OrderRepository;
 import com.surfersolution.workshopionic.repositories.PaymentRepository;
 import com.surfersolution.workshopionic.repositories.ProductRepository;
@@ -55,6 +57,9 @@ public class WorkshopIonicApplication implements CommandLineRunner {
 	
 	@Autowired
 	private PaymentRepository paymentRepository;
+	
+	@Autowired
+	private OrderItemRepository orderItemRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(WorkshopIonicApplication.class, args);
@@ -118,6 +123,18 @@ public class WorkshopIonicApplication implements CommandLineRunner {
 		orderRepository.saveAll(Arrays.asList(or1, or2));
 		paymentRepository.saveAll(Arrays.asList(pay1, pay2));
 		
+		OrderItem oi1 = new OrderItem(or1, p1, 0.00, 1, 2000.00); 
+		OrderItem oi2 = new OrderItem(or1, p3, 0.00, 2, 80.00);
+		OrderItem oi3 = new OrderItem(or2, p2, 100.00, 1, 800.00);
+		
+		or1.getItens().addAll(Arrays.asList(oi1, oi2));
+		or2.getItens().addAll(Arrays.asList(oi3));
+		
+		p1.getItens().addAll(Arrays.asList(oi1));
+		p2.getItens().addAll(Arrays.asList(oi3));
+		p3.getItens().addAll(Arrays.asList(oi2));
+
+		orderItemRepository.saveAll(Arrays.asList(oi1, oi2, oi3));
 	}
 
 }
