@@ -1,5 +1,6 @@
 package com.surfersolution.workshopionic.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,10 @@ public class CategoryService {
 			throw new DataIntegrityException("Can't delete a category which contains products.");
 			
 		}
+	}
+	
+	public List<Category> findAll(){
+		return categoryRepository.findAll();
 	}
 }
 
