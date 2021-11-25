@@ -72,6 +72,12 @@ public class WorkshopIonicApplication implements CommandLineRunner {
 	
 		Category cat1 = new Category(null, "Tech");
 		Category cat2 = new Category(null, "Desk");
+		Category cat3 =  new Category(null, "Bedding");
+		Category cat4 = new Category(null, "Electronics");
+		Category cat5 = new Category(null, "Garden");
+		Category cat6 = new Category(null, "Decoration");
+		Category cat7 = new Category(null, "Perfumery");
+		
 		
 		Product p1 = new Product(null, "Computer", 2000.00);
 		Product p2 = new Product(null, "Printer", 800.00);
@@ -102,7 +108,7 @@ public class WorkshopIonicApplication implements CommandLineRunner {
 
 		cli1.getAddress().addAll(Arrays.asList(a1, a2));
 	
-		categoryRepository.saveAll(Arrays.asList(cat1, cat2));
+		categoryRepository.saveAll(Arrays.asList(cat1, cat2, cat3, cat4, cat5, cat6, cat7));
 		productRepository.saveAll(Arrays.asList(p1, p2, p3));
 		stateRepository.saveAll(Arrays.asList(st1, st2));
 		cityRepository.saveAll(Arrays.asList(c1, c2, c3));
