@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.surfersolution.workshopionic.domain.Category;
+import com.surfersolution.workshopionic.dto.CategoryDTO;
 import com.surfersolution.workshopionic.repositories.CategoryRepository;
 import com.surfersolution.workshopionic.services.exceptions.DataIntegrityException;
 import com.surfersolution.workshopionic.services.exceptions.ObjectNotFoundException;
@@ -55,6 +56,10 @@ public class CategoryService {
 	public Page<Category> findPage(Integer page,Integer linesPerPage, String orderBy, String direction){
 		PageRequest pageRequest =  PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return categoryRepository.findAll(pageRequest);
+	}
+	
+	public Category fromDto(CategoryDTO objDto) {
+		return new Category(objDto.getId(), objDto.getName());
 	}
 }
 
