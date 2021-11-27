@@ -1,5 +1,6 @@
 package com.surfersolution.workshopionic.resources;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.surfersolution.workshopionic.domain.Client;
 import com.surfersolution.workshopionic.dto.ClientDTO;
+import com.surfersolution.workshopionic.dto.ClientNewDTO;
 import com.surfersolution.workshopionic.services.ClientService;
 
 @RestController
@@ -30,6 +33,15 @@ public class ClientResource {
 	public ResponseEntity<Client>find(@PathVariable Integer id){
 		Client obj = service.findById(id);
 		return ResponseEntity.ok().body(obj);
+	}
+	
+	@RequestMapping(method=RequestMethod.POST)
+	public ResponseEntity<Void> insert(@Valid @RequestBody ClientNewDTO objDto){
+		Client obj = service.fromDto(objDto);
+		obj = service.insert(obj);
+	URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+			.buildAndExpand(obj.getId()).toUri();
+	return ResponseEntity.created(uri).build();
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
