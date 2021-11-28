@@ -2,21 +2,39 @@ package com.surfersolution.workshopionic.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+
+import org.hibernate.validator.constraints.Length;
+
 public class ClientNewDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
+	@NotEmpty(message="Name can't be null.")
+	@Length(min=3, max=80, message="Length must have from 5 to 80 letters.")
 	private String name;
+	
+	@NotEmpty(message="Email can't be null.")
+	@Email(message="Invalid Email.")
 	private String email;
+	
+	@NotEmpty(message="CPF or CNPJ can't be null.")
 	private String cpfOrCnpj;
+	
 	private Integer type;
 	
+	@NotEmpty(message="Public Place can't be null.")
 	private String publicPlace;
+	
+	@NotEmpty(message="Number can't be null.")
 	private String number;
 	private String complement;
 	private String district;
+	@NotEmpty(message="ZIPCODE can't be null.")
 	private String zipCode;
-
+	
+	@NotEmpty(message="Phone can't be null.")
 	private String phone1;
 	private String phone2;
 	private String phone3;
