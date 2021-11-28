@@ -20,32 +20,32 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
-@Table(name="TB_ORDER")
+@Table(name = "TB_ORDER")
 public class Order implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	@JsonFormat(pattern="dd/MM/yyyy HH:mm")
+	@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
 	private Date instant;
 
-	@OneToOne(cascade=CascadeType.ALL, mappedBy = "order")
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "order")
 	private Payment payment;
 
 	@ManyToOne
-	@JoinColumn(name="client_id")
+	@JoinColumn(name = "client_id")
 	private Client client;
 	@ManyToOne
 	@JoinColumn(name = "deliver_addres_id")
 	private Address address;
-	
+
 	@OneToMany(mappedBy = "id.order")
 	private Set<OrderItem> itens = new HashSet<>();
-	
+
 	public Order() {
-		
+
 	}
 
 	public Order(Integer id, Date instant, Client client, Address address) {
@@ -120,6 +120,13 @@ public class Order implements Serializable {
 	public void setItens(Set<OrderItem> itens) {
 		this.itens = itens;
 	}
-	
-	
+
+	public double getTotalValue() {
+		double soma = 0.0;
+		for (OrderItem oi : itens) {
+			soma = soma + oi.getSubTotal();
+		}
+		return soma;
+	}
+
 }

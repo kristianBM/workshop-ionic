@@ -12,75 +12,69 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class OrderItem implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@JsonIgnore
 	@EmbeddedId
 	private OrderItemPK id = new OrderItemPK();
-	
+
 	private Double discount;
 	private Integer quantity;
-	private Double preço;
+	private Double price;
 
-	
 	public OrderItem() {
-		
+
 	}
 
-
-	public OrderItem(Order order, Product product, Double discount, Integer quantity, Double preço) {
+	public OrderItem(Order order, Product product, Double discount, Integer quantity, Double price) {
 		super();
 		id.setOrder(order);
 		id.setProduct(product);
 		this.discount = discount;
 		this.quantity = quantity;
-		this.preço = preço;
+		this.price = price;
 	}
-
+	
+	public double getSubTotal() {
+		return (price - discount) * quantity;
+	}
 
 	public OrderItemPK getId() {
 		return id;
 	}
 
-
 	public void setId(OrderItemPK id) {
 		this.id = id;
 	}
-
 
 	public Double getDiscount() {
 		return discount;
 	}
 
-
 	public void setDiscount(Double discount) {
 		this.discount = discount;
 	}
-
 
 	public Integer getQuantity() {
 		return quantity;
 	}
 
-
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
 
-
-	public Double getPreço() {
-		return preço;
+	public Double getPrice() {
+		return price;
 	}
-
 
 	public void setPreço(Double preço) {
-		this.preço = preço;
+		this.price = preço;
 	}
-	
+
 	@JsonIgnore
 	public Order getOrder() {
 		return id.getOrder();
 	}
-	
+
 	public Product getProduct() {
 		return id.getProduct();
 	}
@@ -89,7 +83,7 @@ public class OrderItem implements Serializable {
 	public int hashCode() {
 		return Objects.hash(id);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -101,6 +95,5 @@ public class OrderItem implements Serializable {
 		OrderItem other = (OrderItem) obj;
 		return Objects.equals(id, other.id);
 	}
-	
-	
+
 }
