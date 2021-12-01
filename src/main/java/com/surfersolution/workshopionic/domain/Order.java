@@ -1,8 +1,11 @@
 package com.surfersolution.workshopionic.domain;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
@@ -129,4 +132,27 @@ public class Order implements Serializable {
 		return soma;
 	}
 
+	@Override
+	public String toString() {
+		NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+		StringBuilder builder = new StringBuilder();
+		builder.append("Order number: ");
+		builder.append(getId());
+		builder.append(", Instant");
+		builder.append(sdf.format(getInstant()));
+		builder.append(", Client: ");
+		builder.append(getClient().getName());
+		builder.append(", Payment state: ");
+		builder.append(getPayment().getPaymentState().getDescription());
+		builder.append("\nDetalhes: \n");
+		for (OrderItem oi : getItens()) {
+			builder.append(oi.toString());
+		}
+		builder.append("Total value: ");
+		builder.append(nf.format(getTotalValue()));
+		return builder.toString();
+	}
+
+	
 }
