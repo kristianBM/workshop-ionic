@@ -114,7 +114,7 @@ public class DBService {
 		p10.getCategories().addAll(Arrays.asList(cat6));
 		p11.getCategories().addAll(Arrays.asList(cat7));
 
-		Client cli1 = new Client(null, "Maria Silva", "maria@gmail.com", "36378912377", ClientType.PHYSICAL_PERSON);
+		Client cli1 = new Client(null, "Maria Silva", "kristian.bonfim@hotmail.com", "36378912377", ClientType.PHYSICAL_PERSON);
 
 		cli1.getPhoneNumbers().addAll(Arrays.asList("27363323", "93838393"));
 
