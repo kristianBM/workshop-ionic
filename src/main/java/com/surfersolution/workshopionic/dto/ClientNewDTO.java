@@ -27,6 +27,9 @@ public class ClientNewDTO implements Serializable {
 	
 	private Integer type;
 	
+	@NotEmpty
+	private String password;
+
 	@NotEmpty(message="Public Place can't be null.")
 	private String publicPlace;
 	
@@ -78,6 +81,14 @@ public class ClientNewDTO implements Serializable {
 
 	public void setType(Integer type) {
 		this.type = type;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getPublicPlace() {
