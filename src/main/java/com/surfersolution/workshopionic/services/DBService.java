@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.surfersolution.workshopionic.domain.Address;
@@ -33,6 +34,9 @@ import com.surfersolution.workshopionic.repositories.StateRepository;
 
 @Service
 public class DBService {
+	
+	@Autowired
+	private BCryptPasswordEncoder pe;
 	
 	@Autowired
 	private CategoryRepository categoryRepository;
@@ -114,21 +118,25 @@ public class DBService {
 		p10.getCategories().addAll(Arrays.asList(cat6));
 		p11.getCategories().addAll(Arrays.asList(cat7));
 
-		Client cli1 = new Client(null, "Maria Silva", "kristian.bonfim@hotmail.com", "36378912377", ClientType.PHYSICAL_PERSON);
-
+		Client cli1 = new Client(null, "Maria Silva", "kristian.bonfim@hotmail.com", "36378912377", ClientType.PHYSICAL_PERSON, pe.encode("123"));
 		cli1.getPhoneNumbers().addAll(Arrays.asList("27363323", "93838393"));
+		Client cli2 = new Client(null, "Ana Costa", "kristianmello.dev@gmail.com", "23098753099", ClientType.PHYSICAL_PERSON, pe.encode("123"));
+		cli2.getPhoneNumbers().addAll(Arrays.asList("98883423", "93548993"));
 
 		Address a1 = new Address(null, "Rua Flores", "300", "Apto 303", "Jardim", "38220834", cli1, c1);
 		Address a2 = new Address(null, "Avenida Matos", "105", "Sala 800", "Centro", "38777012", cli1, c2);
-
+		Address a3 = new Address(null, "Avenida Matos", "105", "Sala 800", "Centro", "38777012", cli2, c2);
+		
 		cli1.getAddress().addAll(Arrays.asList(a1, a2));
+		cli2.getAddress().addAll(Arrays.asList(a3));
 
+		
 		categoryRepository.saveAll(Arrays.asList(cat1, cat2, cat3, cat4, cat5, cat6, cat7));
 		productRepository.saveAll(Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11));
 		stateRepository.saveAll(Arrays.asList(st1, st2));
 		cityRepository.saveAll(Arrays.asList(c1, c2, c3));
-		clientRepository.saveAll(Arrays.asList(cli1));
-		addressRepository.saveAll(Arrays.asList(a1, a2));
+		clientRepository.saveAll(Arrays.asList(cli1, cli2));
+		addressRepository.saveAll(Arrays.asList(a1, a2, a3));
 
 		Order or1 = new Order(null, sdf.parse("30/09/2017 10:32"), cli1, a1);
 		Order or2 = new Order(null, sdf.parse("10/10/2017 19:35"), cli1, a2);
