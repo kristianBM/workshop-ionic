@@ -16,10 +16,13 @@ import com.surfersolution.workshopionic.domain.Address;
 import com.surfersolution.workshopionic.domain.City;
 import com.surfersolution.workshopionic.domain.Client;
 import com.surfersolution.workshopionic.domain.enums.ClientType;
+import com.surfersolution.workshopionic.domain.enums.Profile;
 import com.surfersolution.workshopionic.dto.ClientDTO;
 import com.surfersolution.workshopionic.dto.ClientNewDTO;
 import com.surfersolution.workshopionic.repositories.AddressRepository;
 import com.surfersolution.workshopionic.repositories.ClientRepository;
+import com.surfersolution.workshopionic.security.UserSS;
+import com.surfersolution.workshopionic.services.exceptions.AuthorizationException;
 import com.surfersolution.workshopionic.services.exceptions.DataIntegrityException;
 import com.surfersolution.workshopionic.services.exceptions.ObjectNotFoundException;
 
@@ -28,62 +31,70 @@ public class ClientService {
 
 	@Autowired
 	private BCryptPasswordEncoder pe;
-	
+
 	@Autowired
 	AddressRepository addressRepository;
-	
+
 	@Autowired
 	private ClientRepository clientRepository;
-	
+
 	public Client findById(Integer id) {
-		Optional<Client>obj = clientRepository.findById(id);
-		return obj.orElseThrow(() -> new ObjectNotFoundException(
-				"Object no found! Id: " + id + ", Type: " + Client.class.getName()));
+		
+		UserSS user = UserService.authenticated();
+		
+		if(user == null || !user.hasRole(Profile.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Access denied.");
+		}
+		
+		Optional<Client> obj = clientRepository.findById(id);
+		return obj.orElseThrow(
+				() -> new ObjectNotFoundException("Object no found! Id: " + id + ", Type: " + Client.class.getName()));
 	}
-	
+
 	@Transactional
-	public Client insert (Client obj) {
+	public Client insert(Client obj) {
 		obj.setId(null);
 		obj = clientRepository.save(obj);
 		addressRepository.saveAll(obj.getAddress());
 		return obj;
 	}
-	
-	public Client update (Client obj) {
+
+	public Client update(Client obj) {
 		Client newObj = findById(obj.getId());
 		updateData(newObj, obj);
 		return clientRepository.save(newObj);
 	}
-	
-	public void delete (Integer id) {
+
+	public void delete(Integer id) {
 		findById(id);
 		try {
 			clientRepository.deleteById(id);
-		}
-		catch (DataIntegrityViolationException e){
+		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Can't delete a client which contains products.");
-			
+
 		}
 	}
-	
-	public List<Client> findAll(){
+
+	public List<Client> findAll() {
 		return clientRepository.findAll();
 	}
-	
-	public Page<Client> findPage(Integer page,Integer linesPerPage, String orderBy, String direction){
-		PageRequest pageRequest =  PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+
+	public Page<Client> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return clientRepository.findAll(pageRequest);
 	}
-	
+
 	public Client fromDto(ClientDTO objDto) {
 		return new Client(objDto.getId(), objDto.getName(), objDto.getEmail(), null, null, null);
-		
+
 	}
-	
+
 	public Client fromDto(ClientNewDTO objDto) {
-		Client cli = new Client(null, objDto.getName(), objDto.getEmail(), objDto.getCpfOrCnpj(), ClientType.toEnum(objDto.getType()), pe.encode(objDto.getPassword()));
+		Client cli = new Client(null, objDto.getName(), objDto.getEmail(), objDto.getCpfOrCnpj(),
+				ClientType.toEnum(objDto.getType()), pe.encode(objDto.getPassword()));
 		City city = new City(objDto.getCityId(), null, null);
-		Address adr = new Address(null, objDto.getPublicPlace(), objDto.getNumber(), objDto.getComplement(), objDto.getDistrict(), objDto.getZipCode(), cli, city);
+		Address adr = new Address(null, objDto.getPublicPlace(), objDto.getNumber(), objDto.getComplement(),
+				objDto.getDistrict(), objDto.getZipCode(), cli, city);
 		cli.getAddress().add(adr);
 		cli.getPhoneNumbers().add(objDto.getPhone1());
 		if (objDto.getPhone2() != null) {
@@ -94,12 +105,9 @@ public class ClientService {
 		}
 		return cli;
 	}
-	
+
 	private void updateData(Client newObj, Client obj) {
 		newObj.setName(obj.getName());
 		newObj.setEmail(obj.getEmail());
 	}
-	
-	
 }
-
