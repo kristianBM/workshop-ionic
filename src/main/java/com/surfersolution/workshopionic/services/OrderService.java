@@ -4,8 +4,12 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.surfersolution.workshopionic.domain.Client;
 import com.surfersolution.workshopionic.domain.Order;
 import com.surfersolution.workshopionic.domain.OrderItem;
 import com.surfersolution.workshopionic.domain.SlipPayment;
@@ -13,6 +17,8 @@ import com.surfersolution.workshopionic.domain.enums.PaymentState;
 import com.surfersolution.workshopionic.repositories.OrderItemRepository;
 import com.surfersolution.workshopionic.repositories.OrderRepository;
 import com.surfersolution.workshopionic.repositories.PaymentRepository;
+import com.surfersolution.workshopionic.security.UserSS;
+import com.surfersolution.workshopionic.services.exceptions.AuthorizationException;
 import com.surfersolution.workshopionic.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -69,5 +75,15 @@ public class OrderService {
 		return obj;
 	}
 	
+	public Page<Order> findPage(Integer page,Integer linesPerPage, String orderBy, String direction){
+		UserSS user = UserService.authenticated(); 
+		if (user == null) {
+			throw new AuthorizationException("Access denied.");
+		}
+		PageRequest pageRequest =  PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		Client client = clientService.findById(user.getId());
+		return orderRepository.findByClient(client, pageRequest);
+		
+	}
 }
 
