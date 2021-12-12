@@ -18,6 +18,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.surfersolution.workshopionic.services.exceptions.FileException;
 
 @Service
 public class S3Service {
@@ -54,7 +55,7 @@ public class S3Service {
 			return uploadFile(is, fileName, contentType);
 	}
 		catch (IOException e) {
-			throw new RuntimeException(" IO Error: " + e.getMessage());
+			throw new FileException(" IO Error: " + e.getMessage());
 		}	
 	}
 
@@ -67,7 +68,7 @@ public class S3Service {
 			LOG.info("Upload complete !");
 			return s3Client.getUrl(bucketName, fileName).toURI();
 		} catch (URISyntaxException e) {
-			throw new RuntimeException("Error converting URL to URI.");
+			throw new FileException("Error converting URL to URI.");
 		}
 	}
 
