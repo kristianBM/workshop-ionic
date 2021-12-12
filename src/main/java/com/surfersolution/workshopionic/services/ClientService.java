@@ -1,5 +1,6 @@
 package com.surfersolution.workshopionic.services;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.surfersolution.workshopionic.domain.Address;
 import com.surfersolution.workshopionic.domain.City;
@@ -37,6 +39,9 @@ public class ClientService {
 
 	@Autowired
 	private ClientRepository clientRepository;
+	
+	@Autowired
+	private S3Service s3Service;
 
 	public Client findById(Integer id) {
 		
@@ -109,5 +114,9 @@ public class ClientService {
 	private void updateData(Client newObj, Client obj) {
 		newObj.setName(obj.getName());
 		newObj.setEmail(obj.getEmail());
+	}
+	
+	public URI uploadProfilePicture(MultipartFile multipartFile) {
+		return s3Service.uploadFile(multipartFile);
 	}
 }
