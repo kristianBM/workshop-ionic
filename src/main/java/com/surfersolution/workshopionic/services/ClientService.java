@@ -1,10 +1,12 @@
 package com.surfersolution.workshopionic.services;
 
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,7 +44,16 @@ public class ClientService {
 	
 	@Autowired
 	private S3Service s3Service;
+	
+	@Autowired
+	private ImageService imageService;
 
+	@Value("${img.prefix.client.profile}")
+	private String prefix; 
+	
+	@Value("${img.profile.size}")
+	private Integer size;
+	
 	public Client findById(Integer id) {
 		
 		UserSS user = UserService.authenticated();
@@ -83,6 +94,20 @@ public class ClientService {
 	public List<Client> findAll() {
 		return clientRepository.findAll();
 	}
+	
+	public Client findByEmail(String email) {
+		UserSS user = UserService.authenticated();
+		if (user == null || !user.hasRole(Profile.ADMIN) && !email.equals(user.getUsername())) {
+			throw new AuthorizationException("Access Denied.");
+		}
+		Client obj = clientRepository.findByEmail(email);
+		if (obj == null) {
+			throw new ObjectNotFoundException("Object not found! Id: " + user.getId() + "Type: " + Client.class.getName());
+		}
+		return obj;
+	}
+	
+	
 
 	public Page<Client> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
@@ -117,6 +142,17 @@ public class ClientService {
 	}
 	
 	public URI uploadProfilePicture(MultipartFile multipartFile) {
-		return s3Service.uploadFile(multipartFile);
+		UserSS user = UserService.authenticated();
+		
+		if (user == null) {
+			throw new AuthorizationException("Access Denied.");
+		}
+		
+		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
+		jpgImage = imageService.cropSquare(jpgImage);
+		jpgImage = imageService.resize(jpgImage, size);
+		String fileName = prefix + user.getId() + ".jpg";
+		
+		return s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
 	}
 }

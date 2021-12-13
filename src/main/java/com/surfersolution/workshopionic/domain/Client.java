@@ -60,7 +60,6 @@ public class Client implements Serializable {
 		
 	}
 
-
 	public Client(Integer id, String name, String email, String cpfOrCnpj, ClientType type, String password) {
 		super();
 		this.id = id;
@@ -153,7 +152,7 @@ public class Client implements Serializable {
 	public void setOrders(List<Order> orders) {
 		this.orders = orders;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
