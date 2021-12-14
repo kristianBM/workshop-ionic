@@ -102,7 +102,8 @@ public class ClientService {
 		}
 		Client obj = clientRepository.findByEmail(email);
 		if (obj == null) {
-			throw new ObjectNotFoundException("Object not found! Id: " + user.getId() + "Type: " + Client.class.getName());
+			throw new ObjectNotFoundException(
+					"Object not found! Id: " + user.getId() + "Type: " + Client.class.getName());
 		}
 		return obj;
 	}
